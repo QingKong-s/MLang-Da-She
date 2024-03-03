@@ -19,8 +19,7 @@ Window{
 
 
 		if(uMsg==Cst.WM_COMMAND){
-			// FIXME:应当使用HIWORD
-			if((wParam)==0){
+			if(HIWORD(wParam)==0){
 				if(lParam==hBTOpen)
 				{
 					OPENFILENAMEW:ofn;
@@ -31,9 +30,7 @@ Window{
 					
 					N:p = &szFilter;
 					p = AssignStr(p, "音频文件");
-					p = AssignWORD(p, 0);
-					p = AssignStr(p, "*.mp1;*.mp2;*.xm;*.mp3;*.flac;*.wma;*.wav;*.m4a;*.ogg;*.acc;*.ape;*.aiff");
-					p = AssignWORD(p, 0);
+					p = AssignStr(p, ".mp1;*.mp2;*.xm;*.mp3;*.flac;*.wma;*.wav;*.m4a;*.ogg;*.acc;*.ape;*.aiff");
 					p = AssignWORD(p, 0);
 					
 					ofn.lpstrFilter = &szFilter;
