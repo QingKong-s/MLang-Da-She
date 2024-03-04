@@ -1,3 +1,126 @@
+Class:Const_{
+	Public N:DT_TOP;
+	Public N:DT_LEFT;
+	Public N:DT_CENTER;
+	Public N:DT_RIGHT;
+	Public N:DT_VCENTER;
+	Public N:DT_BOTTOM;
+	Public N:DT_WORDBREAK;
+	Public N:DT_SINGLELINE;
+	Public N:DT_EXPANDTABS;
+	Public N:DT_TABSTOP;
+	Public N:DT_NOCLIP;
+	Public N:DT_EXTERNALLEADING;
+	Public N:DT_CALCRECT;
+	Public N:DT_NOPREFIX;
+	Public N:DT_INTERNAL;
+
+	Public N:WM_CREATE;
+	Public N:WM_DESTROY;
+	Public N:WM_PAINT;
+	Public N:WM_SETFONT;
+	Public N:WM_COMMAND;
+	Public N:WM_TIMER;
+	
+	Public N:CS_VREDRAW;
+	Public N:CS_HREDRAW;
+	Public N:CS_DBLCLKS;
+	
+	Public N:WS_BORDER;
+	Public N:WS_CAPTION;
+	Public N:WS_CHILD;
+	Public N:WS_CLIPCHILDREN;
+	Public N:WS_CLIPSIBLINGS;
+	Public N:WS_DISABLED;
+	Public N:WS_DLGFRAME;
+	Public N:WS_GROUP;
+	Public N:WS_HSCROLL;
+	Public N:WS_MAXIMIZE;
+	Public N:WS_MAXIMIZEBOX;
+	Public N:WS_MINIMIZE;
+	Public N:WS_MINIMIZEBOX;
+	Public N:WS_OVERLAPPEDWINDOW;
+	Public N:WS_POPUP;
+	Public N:WS_SIZEBOX;
+	Public N:WS_SYSMENU;
+	Public N:WS_TABSTOP;
+	Public N:WS_VISIBLE;
+	Public N:WS_VSCROLL;
+	
+	Public N:CW_USEDEFAULT;
+	
+	Public N:ES_AUTOHSCROLL;
+	
+	Public N:WS_EX_CLIENTEDGE;
+	
+	Public N:LOGPIXELSY;
+	
+	Public N:GB2312_CHARSET;
+	
+	
+	_init_()->N:={
+		DT_TOP=0;
+		DT_LEFT=0;
+		DT_CENTER=1;
+		DT_RIGHT=2;
+		DT_VCENTER=4;
+		DT_BOTTOM=8;
+		DT_WORDBREAK=16;
+		DT_SINGLELINE=32;
+		DT_EXPANDTABS=64;
+		DT_TABSTOP=128;
+		DT_NOCLIP=256;
+		DT_EXTERNALLEADING=521;
+		DT_CALCRECT=1024;
+		DT_NOPREFIX=2048;
+		DT_INTERNAL=4096;
+		
+		WM_CREATE=1;
+		WM_DESTROY=2;
+		WM_PAINT=15;
+		WM_SETFONT = 48;
+		WM_COMMAND=273;
+		WM_TIMER=275;
+		
+		CS_VREDRAW=1;
+		CS_HREDRAW=2;
+		CS_DBLCLKS=8;
+		
+		WS_BORDER=8388608;
+		WS_CAPTION=12582912;
+		WS_CHILD=1073741824;
+		WS_CLIPCHILDREN=33554432;
+		WS_CLIPSIBLINGS=67108864;
+		WS_DISABLED=134217728;
+		WS_DLGFRAME=4194304;
+		WS_GROUP=131072;
+		WS_HSCROLL=1048576;
+		WS_MAXIMIZE=16777216;
+		WS_MAXIMIZEBOX=65536;
+		WS_MINIMIZE=536870912;
+		WS_MINIMIZEBOX=131072;
+		WS_OVERLAPPEDWINDOW=13565952;
+		WS_POPUP=-2147483648;
+		WS_SIZEBOX=262144;
+		WS_SYSMENU=524288;
+		WS_TABSTOP=65536;
+		WS_VISIBLE=268435456;
+		WS_VSCROLL=2097152;
+		
+		CW_USEDEFAULT=-2147483648;
+		
+		ES_AUTOHSCROLL=128;
+		
+		WS_EX_CLIENTEDGE=512;
+		
+		LOGPIXELSY=90;
+		
+		GB2312_CHARSET=134;
+	}
+}
+
+Const_:Cst;
+
 Struct{
 	FILETIME:={
 		N:dwLowDateTime,
@@ -130,66 +253,50 @@ Extra:"user32.dll"{
 		N:hMenu,
 		N:hInstance,
 		N:lpParam)->N:=CreateWindowExW;
-		
     ShowWindow(
 		N:hwnd,
 		N:nCmdShow)->N:=ShowWindow;
-		
     UpdateWindow(N:hwnd)->N:=UpdateWindow;
-	
 	GetMessageW(
 		MSG:lpMsg,
 		N:hwnd,
 		N:wMsgFilterMin,
 		N:wMsgFilterMax)->N:=GetMessageW;
-	
     TranslateMessage(MSG:lpMsg)->N:=TranslateMessage;
-	
     DispatchMessageW(MSG:lpMsg)->N:=DispatchMessageW;
-	
     LoadIconW(
 		N:hInstance,
 		N:lpIconName)->N:=LoadIconW;
-	
     LoadCursorW(
 		N:hInstance,
 		N:lpIconName)->N:=LoadCursorW;
-		
     RegisterClassW(WNDCLASS:class)->N:=RegisterClassW;
-	
     MessageBoxW(
 		N:hParent,
 		N:pszText,
 		N:pszTitle,
 		N:uMb)->N:=MessageBoxW;
-		
     DefWindowProcW(
 		N:hwnd,
 		N:wMsg,
 		N:wParam,
 		N:lParam)->N:=DefWindowProcW;
-		
     PostQuitMessage(N:nExitCode)->N:=PostQuitMessage;
-	
 	DrawTextW(
 		N:hDC,
 		N:pszText,
 		N:cchText,
 		RECT:prc,
 		N:uFmt)->N:=DrawTextW;
-		
 	BeginPaint(
 		N:hWnd,
 		PAINTSTRUCT:pps)->N:=BeginPaint;
-		
 	EndPaint(
 		N:hWnd,
 		PAINTSTRUCT:pps)->N:=EndPaint;
-		
 	GetClientRect(
 		N:hWnd,
 		RECT:prc)->N:=GetClientRect;
-		
 	SetWindowTextW(
 		N:hWnd,
 		N:pszText)->Z:=SetWindowTextW;
@@ -197,10 +304,38 @@ Extra:"user32.dll"{
 		N:hWnd,
 		N:pszText,
 		Z:nMaxCount)->Z:=GetWindowTextW;
+	GetDC(N:hWnd)->N:=GetDC;
+	ReleaseDC(
+		N:hWnd,
+		N:hDC)->Z:=ReleaseDC;
+	SendMessageW(
+		N:hWnd,
+		N:uMsg,
+		N:wParam,
+		N:lParam)->Z:=SendMessageW;
 }
 
 Extra:"gdi32.dll"{
     GetStockObject(N:nIndex)->N:=GetStockObject;
+	CreateFontW(
+		Z:cHeight,
+		Z:cWidth,
+		Z:cEscapement,
+		Z:cOrientation,
+		Z:cWeight,
+		N:bItalic,
+		N:bUnderline,
+		N:bStrikeOut,
+		N:iCharSet,
+		N:iOutPrecision,
+		N:iClipPrecision,
+		N:iQuality,
+		N:iPitchAndFamily,
+		N:pszFaceName)->N:=CreateFontW;
+	GetDeviceCaps(
+		N:hDC,
+		Z:idx)->Z:=GetDeviceCaps;
+	DeleteObject(N:h)->Z:=DeleteObject;
 }
 
 Extra:"Comdlg32.dll"{
@@ -237,7 +372,7 @@ Console{
 
 Utils{
 	RGB(N:r,N:g,N:b)->N:={
-		return(r + g * 8 + b * 16);
+		return(r + g * 16 + b * 32);
 	}
 	
 	LOWORD(N:u)->N:={
@@ -265,116 +400,17 @@ Utils{
 		memcopy(p, psz, cch * 2 + 2);
 		return(p + cch * 2 + 2);
 	}
-}
-
-Class:Const_{
-	Public N:DT_TOP;
-	Public N:DT_LEFT;
-	Public N:DT_CENTER;
-	Public N:DT_RIGHT;
-	Public N:DT_VCENTER;
-	Public N:DT_BOTTOM;
-	Public N:DT_WORDBREAK;
-	Public N:DT_SINGLELINE;
-	Public N:DT_EXPANDTABS;
-	Public N:DT_TABSTOP;
-	Public N:DT_NOCLIP;
-	Public N:DT_EXTERNALLEADING;
-	Public N:DT_CALCRECT;
-	Public N:DT_NOPREFIX;
-	Public N:DT_INTERNAL;
-
-	Public N:WM_CREATE;
-	Public N:WM_DESTROY;
-	Public N:WM_PAINT;
-	Public N:WM_COMMAND;
-	Public N:WM_TIMER;
 	
-	Public N:CS_VREDRAW;
-	Public N:CS_HREDRAW;
-	Public N:CS_DBLCLKS;
+	EzFont(N:pszFontName, N:iPoint, N:iWeight, Z:bItalic, Z:bUnderline, N:bStrikeOut)->N:={
+		N:hDC = GetDC(0);
+		Z:i = -(iPoint * GetDeviceCaps(hDC, Cst.LOGPIXELSY) / 72);
+		ReleaseDC(0, hDC);
+		return(CreateFontW(i, 0, 0, 0, iWeight, bItalic, bUnderline,
+			bStrikeOut, Cst.GB2312_CHARSET, 0, 0, 0, 0, pszFontName));
+	}
 	
-	Public N:WS_BORDER;
-	Public N:WS_CAPTION;
-	Public N:WS_CHILD;
-	Public N:WS_CLIPCHILDREN;
-	Public N:WS_CLIPSIBLINGS;
-	Public N:WS_DISABLED;
-	Public N:WS_DLGFRAME;
-	Public N:WS_GROUP;
-	Public N:WS_HSCROLL;
-	Public N:WS_MAXIMIZE;
-	Public N:WS_MAXIMIZEBOX;
-	Public N:WS_MINIMIZE;
-	Public N:WS_MINIMIZEBOX;
-	Public N:WS_OVERLAPPEDWINDOW;
-	Public N:WS_POPUP;
-	Public N:WS_SIZEBOX;
-	Public N:WS_SYSMENU;
-	Public N:WS_TABSTOP;
-	Public N:WS_VISIBLE;
-	Public N:WS_VSCROLL;
-	
-	Public N:CW_USEDEFAULT;
-	
-	Public N:ES_AUTOHSCROLL;
-	
-	Public N:WS_EX_CLIENTEDGE;
-	
-	_init_()->N:={
-		DT_TOP=0;
-		DT_LEFT=0;
-		DT_CENTER=1;
-		DT_RIGHT=2;
-		DT_VCENTER=4;
-		DT_BOTTOM=8;
-		DT_WORDBREAK=16;
-		DT_SINGLELINE=32;
-		DT_EXPANDTABS=64;
-		DT_TABSTOP=128;
-		DT_NOCLIP=256;
-		DT_EXTERNALLEADING=521;
-		DT_CALCRECT=1024;
-		DT_NOPREFIX=2048;
-		DT_INTERNAL=4096;
-		
-		WM_CREATE=1;
-		WM_DESTROY=2;
-		WM_PAINT=15;
-		WM_COMMAND=273;
-		WM_TIMER=275;
-		
-		CS_VREDRAW=1;
-		CS_HREDRAW=2;
-		CS_DBLCLKS=8;
-		
-		WS_BORDER=8388608;
-		WS_CAPTION=12582912;
-		WS_CHILD=1073741824;
-		WS_CLIPCHILDREN=33554432;
-		WS_CLIPSIBLINGS=67108864;
-		WS_DISABLED=134217728;
-		WS_DLGFRAME=4194304;
-		WS_GROUP=131072;
-		WS_HSCROLL=1048576;
-		WS_MAXIMIZE=16777216;
-		WS_MAXIMIZEBOX=65536;
-		WS_MINIMIZE=536870912;
-		WS_MINIMIZEBOX=131072;
-		WS_OVERLAPPEDWINDOW=13565952;
-		WS_POPUP=-2147483648;
-		WS_SIZEBOX=262144;
-		WS_SYSMENU=524288;
-		WS_TABSTOP=65536;
-		WS_VISIBLE=268435456;
-		WS_VSCROLL=2097152;
-		
-		CW_USEDEFAULT=-2147483648;
-		
-		ES_AUTOHSCROLL=128;
-		
-		WS_EX_CLIENTEDGE=512;
+	EzFont2(N:pszFontName, N:iPoint)->N:={
+		return(EzFont(pszFontName, iPoint, 400, 0, 0, 0));
 	}
 }
 
-Const_:Cst;

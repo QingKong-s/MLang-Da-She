@@ -13,10 +13,10 @@ Window{
 	N:hBTStop;
 	N:hEDFile;
 	N:hStream;
+	N:hFont;
     WndProc(N:hWnd,N:uMsg,N:wParam,N:lParam)->N:={
 		PAINTSTRUCT:ps;
 		RECT:rcClient;
-
 
 		if(uMsg==Cst.WM_COMMAND){
 			if(HIWORD(wParam)==0){
@@ -30,7 +30,7 @@ Window{
 					
 					N:p = &szFilter;
 					p = AssignStr(p, "音频文件");
-					p = AssignStr(p, ".mp1;*.mp2;*.xm;*.mp3;*.flac;*.wma;*.wav;*.m4a;*.ogg;*.acc;*.ape;*.aiff");
+					p = AssignStr(p, "*.mp1;*.mp2;*.xm;*.mp3;*.flac;*.wma;*.wav;*.m4a;*.ogg;*.acc;*.ape;*.aiff");
 					p = AssignWORD(p, 0);
 					
 					ofn.lpstrFilter = &szFilter;
@@ -48,8 +48,8 @@ Window{
 					ofn.lpstrInitialDir = 0;
 					ofn.lpstrTitle = 0;
 					ofn.Flags = 0;
-					ofn.nFileOffset = 0;
-					ofn.nFileExtension = 0;
+					AssignWORD(&ofn.nFileOffset, 0);
+					AssignWORD(&ofn.nFileExtension, 0);
 					ofn.lpstrDefExt = 0;
 					ofn.lCustData = 0;
 					ofn.lpfnHook = 0;
@@ -88,6 +88,8 @@ Window{
 		};
 		
 		if(uMsg==Cst.WM_DESTROY){
+			BASS_StreamFree(hStream);
+			DeleteObject(hFont);
             PostQuitMessage(0);
 			return(0)
         };
@@ -96,20 +98,29 @@ Window{
 			Z:b=BASS_Init(-1,44100,0,hWnd,0);
 			if(b==0)
 			{
-				MessageBoxW(0,"error","Bass初始化失败！",0);
+				MessageBoxW(0,"Bass初始化失败！","error",0);
 			};
+			hFont=EzFont2("微软雅黑", 9);
+			
 			hBTOpen=CreateWindowExW(0,"Button","打开...",
 				Cst.WS_VISIBLE + Cst.WS_CHILD,
 				20,120,120,30,hWnd,0,0,0);
+			SendMessageW(hBTOpen, Cst.WM_SETFONT, hFont, 0);
+			
 			hBTPlay=CreateWindowExW(0,"Button","播放",
 				Cst.WS_VISIBLE + Cst.WS_CHILD,
 				160,120,120,30,hWnd,0,0,0);
+			SendMessageW(hBTPlay, Cst.WM_SETFONT, hFont, 0);
+			
 			hBTStop=CreateWindowExW(0,"Button","停止",
 				Cst.WS_VISIBLE + Cst.WS_CHILD,
 				300,120,120,30,hWnd,0,0,0);
+			SendMessageW(hBTStop, Cst.WM_SETFONT, hFont, 0);
+			
 			hEDFile=CreateWindowExW(Cst.WS_EX_CLIENTEDGE,"Edit",0,
 				Cst.WS_VISIBLE + Cst.WS_CHILD + Cst.ES_AUTOHSCROLL,
 				20,50,400,30,hWnd,0,0,0);
+			SendMessageW(hEDFile, Cst.WM_SETFONT, hFont, 0);
 			return(0);
 		};
 		
@@ -122,7 +133,7 @@ Window{
 		WNDCLASS:wc;
 		N:szCls = "MLang.Player.WndClass.Main";
 
-        wc.style=3;
+        wc.style = Cst.CS_VREDRAW + Cst.CS_HREDRAW;
         wc.lpfnwndproc=~WndProc;
         wc.cbClsextra=0;
         wc.cbWndExtra=0;
@@ -130,18 +141,18 @@ Window{
         wc.hIcon=LoadIconW(0,"32512");
         wc.hCursor=LoadCursorW(0,"32512");
         wc.hbrBackground=GetStockObject(0);
-        wc.lpszMenuName=&"";
+        wc.lpszMenuName=0;
         wc.lpszClassName=szCls;
         if(RegisterClassW(wc)==0)
 		{
-            MessageBoxW(0,"error","注册窗口类失败！",0);
+            MessageBoxW(0,"注册窗口类失败！","error",0);
 			return(0);
         };
         hWnd=CreateWindowExW(
 			0,
 			szCls,
 			"爱慕浪运动员",
-			Cst.WS_OVERLAPPEDWINDOW,
+			Cst.WS_CAPTION + Cst.WS_SYSMENU + Cst.WS_MINIMIZEBOX + Cst.WS_CLIPCHILDREN,
 			Cst.CW_USEDEFAULT,
 			Cst.CW_USEDEFAULT,
 			460,
