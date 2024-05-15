@@ -23,4 +23,9 @@ Extra:"Bass.dll"{
 		Z:bRestart)->Z:=BASS_ChannelPlay;
 		
 	BASS_Free()->Z:=BASS_Free;
+	
+	BASS_ChannelGetData(
+		N:hStream,
+		N:pBuf,
+		N:dwLen)->N:=BASS_ChannelGetData;
 }

@@ -17,10 +17,12 @@ Class:Const_{
 
 	Public N:WM_CREATE;
 	Public N:WM_DESTROY;
+	Public N:WM_SIZE;
 	Public N:WM_PAINT;
 	Public N:WM_SETFONT;
 	Public N:WM_COMMAND;
 	Public N:WM_TIMER;
+	Public N:WM_CTLCOLORBTN;
 	
 	Public N:CS_VREDRAW;
 	Public N:CS_HREDRAW;
@@ -57,6 +59,14 @@ Class:Const_{
 	
 	Public N:GB2312_CHARSET;
 	
+	Public Z:PS_SOLID;
+	
+	Public Z:COLOR_WINDOW;
+	
+	Public N:SRCCOPY;
+
+	Public N:SWP_NOSIZE;
+	Public N:SWP_NOZORDER;
 	
 	_init_()->N:={
 		DT_TOP=0;
@@ -77,10 +87,12 @@ Class:Const_{
 		
 		WM_CREATE=1;
 		WM_DESTROY=2;
+		WM_SIZE = 5;
 		WM_PAINT=15;
 		WM_SETFONT = 48;
 		WM_COMMAND=273;
 		WM_TIMER=275;
+		WM_CTLCOLORBTN = 309;
 		
 		CS_VREDRAW=1;
 		CS_HREDRAW=2;
@@ -116,6 +128,15 @@ Class:Const_{
 		LOGPIXELSY=90;
 		
 		GB2312_CHARSET=134;
+		
+		PS_SOLID = 0;
+		
+		COLOR_WINDOW = 5;
+		
+		SRCCOPY = 13369376;
+
+		SWP_NOSIZE = 1;
+		SWP_NOZORDER = 4;
 	}
 }
 
@@ -148,10 +169,10 @@ Struct{
 		N:dwControlKeyState
 	}
 	RECT:={
-        N:Left,
-        N:Top,
-        N:Right,
-        N:Bottom
+        N:left,
+        N:top,
+        N:right,
+        N:bottom
     }
     MSG:={
         N:hwnd,
@@ -313,6 +334,21 @@ Extra:"user32.dll"{
 		N:uMsg,
 		N:wParam,
 		N:lParam)->Z:=SendMessageW;
+	SetTimer(
+		N:hWnd,
+		N:nIDEvent,
+		N:uElapse,
+		N:lpTimerFunc)->N:=SetTimer;
+	GetSysColorBrush(Z:nIndex)->N:=GetSysColorBrush;
+	FillRect(
+		N:hDC,
+		RECT:lprc,
+		N:hbr)->Z:=FillRect;
+	SetWindowPos(
+		N:hWnd,
+		N:hWndInsertAfter,
+		Z:x,Z:y,Z:cx,Z:cy,
+		N:uFlags)->Z:=SetWindowPos;
 }
 
 Extra:"gdi32.dll"{
@@ -336,6 +372,36 @@ Extra:"gdi32.dll"{
 		N:hDC,
 		Z:idx)->Z:=GetDeviceCaps;
 	DeleteObject(N:h)->Z:=DeleteObject;
+	CreateCompatibleDC(N:hDC)->N:=CreateCompatibleDC;
+	CreateCompatibleBitmap(
+		N:hDC,
+		Z:cx,
+		Z:cy)->N:=CreateCompatibleBitmap;
+	SelectObject(
+		N:hDC,
+		N:hObj)->N:=SelectObject;
+	CreatePen(
+		Z:iStyle,
+		Z:iWidth,
+		N:cr)->N:=CreatePen;
+	CreateSolidBrush(N:cr)->N:=CreateSolidBrush;
+	Rectangle(
+		N:hDC,
+		Z:left,
+		Z:top,
+		Z:right,
+		Z:bottom)->Z:=Rectangle;
+	BitBlt(
+		N:hdc,
+		Z:x,
+		Z:y,
+		Z:cx,
+		Z:cy,
+		N:hdcSrc,
+		Z:x1,
+		Z:y1,
+		N:rop)->Z:=BitBlt;
+	DeleteDC(N:hdc)->Z:=DeleteDC;
 }
 
 Extra:"Comdlg32.dll"{
@@ -372,7 +438,7 @@ Console{
 
 Utils{
 	RGB(N:r,N:g,N:b)->N:={
-		return(r + g * 16 + b * 32);
+		return(r + g * 256 + b * 65536);
 	}
 	
 	LOWORD(N:u)->N:={
@@ -413,4 +479,3 @@ Utils{
 		return(EzFont(pszFontName, iPoint, 400, 0, 0, 0));
 	}
 }
-

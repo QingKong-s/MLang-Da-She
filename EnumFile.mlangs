@@ -1,4 +1,4 @@
-#include<"Utils.txt">;
+#include<"Utils.mlangs">;
 
 Main{
 main()->N:={

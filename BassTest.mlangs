@@ -1,5 +1,5 @@
-#include<"Utils.txt">;
-#include<"Bass.txt">;
+#include<"Utils.mlangs">;
+#include<"Bass.mlangs">;
 
 
 Main{

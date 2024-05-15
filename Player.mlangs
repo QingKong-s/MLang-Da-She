@@ -1,0 +1,287 @@
+#include<"Utils.mlangs">;
+#include<"Bass.mlangs">;
+
+Main{
+    main()->N:={
+        WinMain(GetModuleHandleW(0),0,0,1);
+    }
+}
+
+Window{
+	N:hBTOpen;
+	N:hBTPlay;
+	N:hBTStop;
+	N:hEDFile;
+	N:hStream;
+	N:hFont;
+	
+	N:hCDC;
+	N:hBmp;
+	N:hPen;
+	N:hBrush;
+
+	Z:yBottomSpe;
+	
+	Boolen:fData[128];
+	
+	RECT:m_rcClient;
+
+	PaintSpe()->N:={
+		N:i = 0;
+		Z:cxBar = (m_rcClient.right - 40) / 40;
+		N:xStart = 20;
+		Z:yTop;
+		R:f;
+		FillRect(hCDC, m_rcClient, GetSysColorBrush(Cst.COLOR_WINDOW));
+		while (i < 40) {
+			f = fData[i];
+			yTop = f * (m_rcClient.bottom);
+			if (yTop < 3) {
+				yTop = 3;
+			};
+			Rectangle(
+				hCDC,
+				xStart + cxBar * i,
+				yBottomSpe - yTop,
+				xStart + cxBar * (i + 1),
+				yBottomSpe);
+			i = i + 1;
+		};
+	}
+	
+	SetupGdiStuff(N:hWnd)->N:={
+		DestoryGdiStuff();
+		N:hDC = GetDC(hWnd);
+		hCDC = CreateCompatibleDC(hDC);
+		hBmp = CreateCompatibleBitmap(hDC, m_rcClient.right, m_rcClient.bottom);
+		SelectObject(hCDC, hBmp);
+		ReleaseDC(hWnd, hDC);
+
+		hPen = CreatePen(Cst.PS_SOLID, 1, RGB(51, 51, 153));
+		hBrush = CreateSolidBrush(RGB(0, 153, 255));
+		SelectObject(hCDC, hPen);
+		SelectObject(hCDC, hBrush);
+
+		PaintSpe();
+	}
+
+	DestoryGdiStuff()->N:={
+		DeleteDC(hCDC);
+		DeleteObject(hBmp);
+		DeleteObject(hPen);
+		DeleteObject(hBrush);
+	}
+	
+    WndProc(N:hWnd,N:uMsg,N:wParam,N:lParam)->N:={
+		PAINTSTRUCT:ps;
+
+		if(uMsg == Cst.WM_TIMER) {
+			if(hStream == 0)
+				return(0);
+			BASS_ChannelGetData(hStream, &fData, -2147483648);
+			PaintSpe();
+			N:hDC = GetDC(hWnd);
+			BitBlt(hDC, 0, 0, m_rcClient.right, m_rcClient.bottom, hCDC, 0, 0, Cst.SRCCOPY);
+			ReleaseDC(hWnd, hDC);
+		};
+		if(uMsg==Cst.WM_COMMAND) {
+			if(HIWORD(wParam)==0){
+				if(lParam==hBTOpen)
+				{
+					OPENFILENAMEW:ofn;
+					ofn.lStructSize=88;
+					ofn.hwndOwner=hWnd;
+					ofn.hInstance=0;
+					B:szFilter[200];
+					
+					N:p = &szFilter;
+					p = AssignStr(p, "音频文件");
+					p = AssignStr(p, "*.mp1;*.mp2;*.xm;*.mp3;*.flac;*.wma;*.wav;*.m4a;*.ogg;*.acc;*.ape;*.aiff");
+					p = AssignWORD(p, 0);
+					
+					ofn.lpstrFilter = &szFilter;
+					ofn.lpstrCustomFilter = 0;
+					ofn.nMaxCustFilter = 0;
+					ofn.nFilterIndex = 1;
+					
+					B:szFile[512];
+					ofn.lpstrFile = &szFile;
+					AssignWORD(&szFile, 0);
+					
+					ofn.nMaxFile = 256;
+					ofn.lpstrFileTitle = 0;
+					ofn.nMaxFileTitle = 0;
+					ofn.lpstrInitialDir = 0;
+					ofn.lpstrTitle = 0;
+					ofn.Flags = 0;
+					AssignWORD(&ofn.nFileOffset, 0);
+					AssignWORD(&ofn.nFileExtension, 0);
+					ofn.lpstrDefExt = 0;
+					ofn.lCustData = 0;
+					ofn.lpfnHook = 0;
+					ofn.lpTemplateName = 0;
+					ofn.pvReserved = 0;
+					ofn.dwReserved = 0;
+					ofn.FlagsEx = 0;
+					
+					if(GetOpenFileNameW(ofn) != 0)
+					{
+						SetWindowTextW(hEDFile, &szFile);
+					};
+					return(0);
+				};
+				if(lParam==hBTPlay)
+				{
+					if(hStream != 0)
+					{
+						BASS_StreamFree(hStream);
+					};
+					B:szFile[512];
+					GetWindowTextW(hEDFile, &szFile, 256);
+					hStream = BASS_StreamCreateFile(0, &szFile, 0, 0, 0, 0, 2147483648);
+					BASS_ChannelPlay(hStream, 1);
+					return(0);
+				};
+				if(lParam==hBTStop)
+				{
+					if(hStream != 0)
+					{
+						BASS_StreamFree(hStream);
+						hStream = 0;
+					};
+				};
+			};
+		};
+		if (uMsg == Cst.WM_CTLCOLORBTN) {
+			return(GetSysColorBrush(Cst.COLOR_WINDOW));
+		};
+		if (uMsg == Cst.WM_PAINT) {
+			BeginPaint(hWnd,ps);
+			BitBlt(ps.hDC,
+				ps.rcPaint.left,ps.rcPaint.top,
+				ps.rcPaint.right-ps.rcPaint.left,ps.rcPaint.bottom-ps.rcPaint.top,
+				hCDC,ps.rcPaint.left,ps.rcPaint.top, Cst.SRCCOPY);
+			EndPaint(hWnd,ps);
+		}
+		if (uMsg == Cst.WM_SIZE) {
+			m_rcClient.left = 0;
+			m_rcClient.top = 0;
+			m_rcClient.right = LOWORD(lParam);
+			m_rcClient.bottom = HIWORD(lParam);
+
+			Z:Margin = 20;
+			Z:Padding = 10;
+			Z:cyCtrl = 30;
+			Z:y = m_rcClient.bottom - Margin - cyCtrl;
+
+			SetWindowPos(hEDFile, 0,
+				Margin, y, m_rcClient.right - Margin * 2, cyCtrl,
+				Cst.SWP_NOZORDER);
+			
+			y = y - Padding - cyCtrl;
+			SetWindowPos(hBTOpen, 0,
+				Margin, y, 
+				0, 0, Cst.SWP_NOZORDER + Cst.SWP_NOSIZE);
+			SetWindowPos(hBTPlay, 0,
+				(m_rcClient.right - 120) / 2, y, 
+				0, 0, Cst.SWP_NOZORDER + Cst.SWP_NOSIZE);
+			SetWindowPos(hBTStop, 0,
+				m_rcClient.right - 120 - Margin, y,
+				0, 0, Cst.SWP_NOZORDER + Cst.SWP_NOSIZE);
+
+			yBottomSpe = y - Padding;
+			SetupGdiStuff(hWnd);
+		};
+		if(uMsg==Cst.WM_DESTROY){
+			BASS_StreamFree(hStream);
+			DeleteObject(hFont);
+			DestoryGdiStuff();
+            PostQuitMessage(0);
+			return(0);
+        };
+		if(uMsg == Cst.WM_CREATE)
+		{
+			hCDC = 0;
+			hBmp = 0;
+			hPen = 0;
+			hBrush = 0;
+			yBottomSpe = 100;
+			Z:b = BASS_Init(-1, 44100, 0, hWnd, 0);
+			if(b == 0)
+			{
+				MessageBoxW(0,"Bass初始化失败！","error",0);
+			};
+			hFont=EzFont2("微软雅黑", 9);
+			
+			hBTOpen=CreateWindowExW(0,"Button","打开...",
+				Cst.WS_VISIBLE + Cst.WS_CHILD,
+				20,140,120,30,hWnd,0,0,0);
+			SendMessageW(hBTOpen, Cst.WM_SETFONT, hFont, 0);
+			
+			hBTPlay=CreateWindowExW(0,"Button","播放",
+				Cst.WS_VISIBLE + Cst.WS_CHILD,
+				160,140,120,30,hWnd,0,0,0);
+			SendMessageW(hBTPlay, Cst.WM_SETFONT, hFont, 0);
+			
+			hBTStop=CreateWindowExW(0,"Button","停止",
+				Cst.WS_VISIBLE + Cst.WS_CHILD,
+				300,140,120,30,hWnd,0,0,0);
+			SendMessageW(hBTStop, Cst.WM_SETFONT, hFont, 0);
+			
+			hEDFile=CreateWindowExW(Cst.WS_EX_CLIENTEDGE,"Edit",0,
+				Cst.WS_VISIBLE + Cst.WS_CHILD + Cst.ES_AUTOHSCROLL,
+				20,100,400,30,hWnd,0,0,0);
+			SendMessageW(hEDFile, Cst.WM_SETFONT, hFont, 0);
+			GetClientRect(hWnd, m_rcClient);
+			SetupGdiStuff(hWnd);
+			SetTimer(hWnd, 100, 50, 0);
+			return(0);
+		};
+		
+        return(DefWindowProcW(hWnd,uMsg,wParam,lParam));
+    }
+	
+    WinMain(N:hInstance, N:hPrevInstance, N:szCmdLine, N:nCmdShow)->N:={
+        N:hWnd;
+		MSG:msg;
+		WNDCLASS:wc;
+		N:szCls = "MLang.Player.WndClass.Main";
+
+        wc.style 			= Cst.CS_VREDRAW + Cst.CS_HREDRAW;
+        wc.lpfnwndproc		= ~WndProc;
+        wc.cbClsextra		= 0;
+        wc.cbWndExtra		= 0;
+        wc.hInstance		= hInstance;
+        wc.hIcon			= LoadIconW(0, 32512);
+        wc.hCursor			= LoadCursorW(0, 32512);
+        wc.hbrBackground 	= GetSysColorBrush(Cst.COLOR_WINDOW);
+        wc.lpszMenuName		= 0;
+        wc.lpszClassName	= szCls;
+        if (RegisterClassW(wc) == 0)
+		{
+            MessageBoxW(0,"注册窗口类失败！","error",0);
+			return(0);
+        };
+        hWnd = CreateWindowExW(
+			0,
+			szCls,
+			"爱慕浪运动员",
+			Cst.WS_OVERLAPPEDWINDOW + Cst.WS_CLIPCHILDREN,
+			Cst.CW_USEDEFAULT,
+			Cst.CW_USEDEFAULT,
+			460,
+			230,
+			0, 0, hInstance, 0);
+
+        ShowWindow(hWnd, nCmdShow);
+        UpdateWindow(hWnd);
+        while (GetMessageW(msg, 0, 0, 0) != 0)
+		{
+            TranslateMessage(msg);
+            DispatchMessageW(msg);
+        };
+		BASS_Free();
+	
+        return(msg.wParam);
+    }
+}
